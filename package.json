@@ -1,0 +1,27 @@
+{
+  "name": "s3s-backend",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./start.js"
+  },
+  "dependencies": {
+    "@babel/core": "^7.8.4",
+    "@babel/preset-env": "^7.8.4",
+    "@babel/register": "^7.8.3",
+    "apollo-boost": "^0.4.7",
+    "apollo-client": "^2.6.8",
+    "cookie-parser": "~1.4.4",
+    "cors": "^2.8.5",
+    "cross-fetch": "^3.0.4",
+    "debug": "~2.6.9",
+    "dotenv": "^8.2.0",
+    "express": "~4.16.1",
+    "graphql": "^14.6.0",
+    "http-errors": "~1.6.3",
+    "jade": "~1.11.0",
+    "morgan": "~1.9.1",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.5"
+  }
+}
