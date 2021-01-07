@@ -31,12 +31,11 @@ let makeFiltros = (body)=> {
 }
 
 router.post('/entities', (req, res) => {
-    // entidades de uno o más proveedores de información
-    // las entidades debería traer:
-    // nivel de gobierno
-    // supplier_id
-    // un proveedor de información podría traer de varios niveles
-
+    /* entidades de uno o más proveedores de información
+    las entidades debería traer:
+    nivel de gobierno
+    supplier_id
+    un proveedor de información podría traer de varios niveles*/
     const {nivel_gobierno} = req.body;
     let endpoints_ = [];
 
@@ -60,7 +59,6 @@ router.post('/entities', (req, res) => {
         if(a.nombre > b.nombre) { return 1; }
         return 0;
     };
-
     Promise.all(promises).then( data => {
         // asignar supplier_id
         const dl = data.length;

@@ -34,10 +34,10 @@ const fetchEntities = endpoint => {
                 console.log("Error:", e);
                 resolve([]);
             }
-        });
-    }).catch(error => {
-        console.log("Error:", error);
-        resolve([]);
+        }).catch(error =>{
+            console.log("Error",error)
+            resolve([])
+        })
     });
 };
 
