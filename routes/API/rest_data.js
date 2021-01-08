@@ -1,5 +1,7 @@
 const axios = require('axios');
 const qs = require('qs');
+
+
 //En caso de error regresa un arreglo vacio para no interrumpir el flujo de las demás promises
 const fetchEntities = endpoint => {
     return getToken(endpoint).then(token_data => {
@@ -10,7 +12,8 @@ const fetchEntities = endpoint => {
             headers: {
                 'Authorization': 'Bearer '+access_token,
             },
-            json: true
+            json: true,
+            timeout:process.env.TIMEOUT
         };
         return axios(opts).then(response => {
             return response.data
@@ -34,7 +37,8 @@ const fetchData = (endpoint, options) => {
                 'Authorization': 'Bearer ' + access_token
             },
             data: options,
-            json: true
+            json: true,
+            timeout:process.env.TIMEOUT
         };
         return axios(opts).then(response => {
             let data = response.data;
@@ -62,7 +66,8 @@ const getToken = endpoint => {
             client_secret: endpoint.client_secret,
             scope:endpoint.scope
         }),
-        json: true
+        json: true,
+        timeout:process.env.TIMEOUT
     };
     return axios(opts);
 };
