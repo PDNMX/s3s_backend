@@ -14,17 +14,10 @@ const fetchEntities = endpoint => {
         };
         return axios(opts).then(response => {
             return response.data
-        })
-            .catch(error => {
+        }).catch(error => {
                     console.log(error);
                     return [];
-                }
-            )
-            .catch(error => {
-                    console.log(error);
-                    return [];
-                }
-            )
+                });
     }).catch(error => {
         console.log(error);
         return [];
