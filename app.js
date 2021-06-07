@@ -2,10 +2,12 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+
 require('dotenv').config();
 
 var indexRouter = require('./routes/index');
 var apiRouter = require('./routes/API/v1');
+var charts = require('./routes/API/charts');
 
 var app = express();
 
@@ -17,6 +19,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/api/v1', apiRouter);
-
+app.use('/charts',charts);
 
 app.listen(process.env.PORT, () => console.log('Example app listening on port '+process.env.PORT))
