@@ -1,4 +1,8 @@
 version: '3'
+
+volumes:
+  db_data:
+
 services:
   api:
     build:
@@ -7,3 +11,14 @@ services:
     restart: always
     ports:
       - ${PORT}:${PORT}
+  db-viz:
+    image: postgres:13-alpine
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: ${PASSWORD_POSTGRES}
+      POSTGRES_USER: ${USER_POSTGRES}
+      POSTGRES_DB: ${DATABASE_VIZ_S3}
+    depends_on:
+      - api
+    volumes:
+      - 'db_data:/var/lib/postgresql/data'
