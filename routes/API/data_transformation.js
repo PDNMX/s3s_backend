@@ -9,7 +9,7 @@ const rest = data => {
         d.autoridadSancionadora = d.autoridadSancionadora ? d.autoridadSancionadora : leyenda;
         d.tipoFalta ={
             clave: d.tipoFalta.clave,
-            valor: d.tipoFalta.clave === "OTRO" ? 'OTRO' + (d.tipoFalta.descripcion ? ' ('+d.tipoFalta.descripcion+')' : '') : tiposFalta.find(element => element.clave === d.tipoFalta.valor)
+            valor: d.tipoFalta.clave === "OTRO" ? 'OTRO' + (d.tipoFalta.descripcion ? ' ('+d.tipoFalta.descripcion+')' : '') : tiposFalta.find(element => element.clave === d.tipoFalta.clave).valor
         };
         d.tipoSancion = d.tipoSancion.map(element => {
             let temporal = tiposSancion.find(e => e.clave === element.clave);
@@ -31,7 +31,7 @@ const rest = data => {
         d.resolucion= {
             fechaResolucion: d. resolucion && d.resolucion.fecha_notificacion ? d.resolucion.fecha_notificacion : leyenda
         } ;
-
+        d.observaciones = d.observaciones
     });
     return data;
 };
