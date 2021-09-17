@@ -2,6 +2,7 @@ import ApolloClient, {InMemoryCache} from "apollo-boost";
 import {gql} from "apollo-boost";
 import 'cross-fetch/polyfill';
 import fs from "fs";
+import {generateZipForPath} from "../utils/generateZipForPath";
 
 const fetchEntities = endpoint => {
     const client = new ApolloClient({
@@ -167,22 +168,20 @@ const itera = (endpoint,options, idFile) => {
             options.page += 1;
             return itera(endpoint, options, idFile);
         } else{
-            const zip = await generateZipForPath(`${idFile}`);
-            return zip;
+            let response = await generateZipForPath(`${idFile}`);
+            return response;
         }
     }).catch(error => {
-        console.log(error)
-        return null;
+        return {
+            "error": error,
+            "idFile": idFile
+        };
     });
 };
 
-const getBulk = async (endpoint,options) => {
-    let data = await itera(endpoint,options);
-    return data;
-}
 
 module.exports = {
     fetchEntities,
     fetchData,
-    getBulk
+    itera
 };

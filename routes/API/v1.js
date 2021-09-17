@@ -205,7 +205,7 @@ router.post('/downloadData', async (req, res) => {
         if (endpoint.type === 'REST') {
             resultado = await rest_data.itera(endpoint, options);
         } else if (endpoint.type === 'GRAPHQL') {
-            resultado = await graphql_data.getBulk(endpoint, options);
+            resultado = await graphql_data.itera(endpoint, options);
         }
 
         nameFileZip = resultado.idFile;
