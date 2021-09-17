@@ -1,14 +1,11 @@
-var express = require('express');
-var cors = require ('cors');
-
-var router = express.Router();
-router.use(cors());
-
+import {deleteFiles} from "../utils/generateZipForPath";
+const express = require('express');
+const cors = require ('cors');
+const router = express.Router();
 const endpoints = require('../../endpoints');
 const rest_data = require('./rest_data');
 const graphql_data = require('./graphql_data');
 const dt = require('./data_transformation');
-
 let makeFiltros = (body)=> {
     const params = [
         'nombres',
@@ -29,6 +26,8 @@ let makeFiltros = (body)=> {
     }
     return query;
 }
+
+router.use(cors());
 
 router.post('/entities', (req, res) => {
     /* entidades de uno o más proveedores de información
@@ -120,7 +119,7 @@ router.post('/summary', (req, res)=> {
 
     Promise.all(queries).then( data => {
         let summary = data.map (d => {
-            if (typeof d.error !== 'undefined'){
+            if (d.hasOwnProperty('error')){
                 return d;
             } else {
                 return {
@@ -133,7 +132,7 @@ router.post('/summary', (req, res)=> {
         });
         res.json(summary);
     }).catch(error => {
-        console.log(error);
+        console.error(error);
         res.status(500).json({
             error: "Algo salio mal..."
         });
@@ -171,7 +170,7 @@ router.post('/search', (req, res) => {
         rest_data.fetchData(endpoint, options).then(data => {
             res.json(dt.rest(data));
         }).catch( e => {
-            console.log(e);
+            console.error(e);
             res.status(500).json({
                 error: "Algo salio mal..."
             });
@@ -180,13 +179,59 @@ router.post('/search', (req, res) => {
         graphql_data.fetchData(endpoint, options).then(data => {
             res.json(dt.sfp(data));
         }).catch( e => {
-            console.log(e);
+            console.error(e);
             res.status(500).json({
                 error: "Algo salio mal"
             });
         });
     }
 
+});
+
+
+router.post('/downloadData', async (req, res) => {
+    const {body} = req;
+    const {supplier_id} = body;
+    let endpoint = endpoints.find(d => d.supplier_id === supplier_id);
+    try {
+        let nameFileZip, resultado;
+        let options = {
+            pageSize: 200,
+            query: makeFiltros(body),
+            sort: body.sort,
+            page: 1
+        };
+
+        if (endpoint.type === 'REST') {
+            resultado = await rest_data.itera(endpoint, options);
+        } else if (endpoint.type === 'GRAPHQL') {
+            resultado = await graphql_data.getBulk(endpoint, options);
+        }
+
+        nameFileZip = resultado.idFile;
+
+        if (resultado.error) {
+            console.error(`Error generando bulk: ${resultado.error.message}`)
+            await deleteFiles(nameFileZip);
+            res.status(500).send({
+                "code": 500,
+                "message": "Error al generar el archivo"
+            })
+        } else {
+            res.download(`./${nameFileZip}.zip`, async(Errback) => {
+                if (Errback) {
+                    console.error(`Error-> ${Errback}`);
+                }
+                await deleteFiles(nameFileZip);
+            });
+        }
+    } catch (error) {
+        console.error(`Error al generar el archivo: ${error.message}`)
+        res.status(500).send({
+            "code": 500,
+            "message": "Error al generar el archivo"
+        })
+    }
 });
 
 module.exports = router;

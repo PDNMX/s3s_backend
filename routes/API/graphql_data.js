@@ -1,6 +1,7 @@
 import ApolloClient, {InMemoryCache} from "apollo-boost";
 import {gql} from "apollo-boost";
 import 'cross-fetch/polyfill';
+import fs from "fs";
 
 const fetchEntities = endpoint => {
     const client = new ApolloClient({
@@ -150,7 +151,38 @@ const fetchData = (endpoint, options) => {
 
 };
 
+
+const itera = (endpoint,options, idFile) => {
+    if(!idFile){
+        idFile = uuidv4();
+        fs.mkdirSync(`./${idFile}`);
+    }
+    return fetchData(endpoint, options).then(async (res) => {
+        let {pagination, results} = res;
+        let path = `./${idFile}/${endpoint.supplier_id}_${pagination.page}.json`;
+        let data = JSON.stringify(results);
+        fs.writeFileSync(path, data);
+        let hasNextPage = (Math.trunc(pagination.totalRows / (pagination.pageSize * pagination.page)));
+        if (hasNextPage > 0) {
+            options.page += 1;
+            return itera(endpoint, options, idFile);
+        } else{
+            const zip = await generateZipForPath(`${idFile}`);
+            return zip;
+        }
+    }).catch(error => {
+        console.log(error)
+        return null;
+    });
+};
+
+const getBulk = async (endpoint,options) => {
+    let data = await itera(endpoint,options);
+    return data;
+}
+
 module.exports = {
     fetchEntities,
-    fetchData
+    fetchData,
+    getBulk
 };
