@@ -71,7 +71,7 @@ router.post('/entities', (req, res) => {
         }
         res.json(entities.sort(cfn));
     }).catch(error => {
-        console.log(error);
+        console.error(error);
         res.json(entities.sort(cfn));
     });
 
