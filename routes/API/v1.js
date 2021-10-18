@@ -37,9 +37,14 @@ router.post('/entities', (req, res) => {
     supplier_id
     un proveedor de información podría traer de varios niveles*/
     const {nivel_gobierno} = req.body;
+    const {supplier_id} = req.body;
+
     let endpoints_ = [];
 
-    if (typeof nivel_gobierno !== 'undefined' && nivel_gobierno !== null && nivel_gobierno !== '') {
+    if(typeof  supplier_id !== 'undefined' && !!supplier_id ){
+        endpoints_ = endpoints.filter(e => e.supplier_id === supplier_id);
+    }
+    else if (typeof nivel_gobierno !== 'undefined' && nivel_gobierno !== null && nivel_gobierno !== '') {
         endpoints_ = endpoints.filter(e => e.levels.includes(nivel_gobierno));
     } else {
         endpoints_ = endpoints;
@@ -81,7 +86,7 @@ router.post('/entities', (req, res) => {
 router.post('/summary', (req, res)=> {
     // búsqueda general
     const { body } =  req;
-    const { nivel_gobierno } = body;
+    const { nivel_gobierno, proveedor } = body;
 
     let options = {
         page: 1,
@@ -93,7 +98,10 @@ router.post('/summary', (req, res)=> {
     //si seleccionó nivel, filtrar endpoints
     let endpoints_ = [];
 
-    if (typeof nivel_gobierno !== 'undefined'&& nivel_gobierno !== null && nivel_gobierno !== ''){
+   if(typeof proveedor !== 'undefined' && proveedor){
+        endpoints_ = endpoints.filter(e => e.supplier_id === proveedor);
+    }
+    else if (typeof nivel_gobierno !== 'undefined'&& nivel_gobierno !== null && nivel_gobierno !== ''){
         endpoints_ = endpoints.filter(e => e.levels.includes(nivel_gobierno));
     } else {
         endpoints_ = endpoints;
@@ -188,5 +196,23 @@ router.post('/search', (req, res) => {
     }
 
 });
+
+router.post('/getProviders', (req, res) =>{
+    const {nivel_gobierno} = req.body;
+    let endpoints_ = [], providers = [];
+
+    if (typeof nivel_gobierno !== 'undefined' && nivel_gobierno !== null && nivel_gobierno !== '') {
+        endpoints_ = endpoints.filter(e => e.levels.includes(nivel_gobierno));
+    } else {
+        endpoints_ = endpoints;
+    }
+
+    providers = endpoints_.map(endpoint => {
+        return {
+            'supplier_name': endpoint.supplier_name,
+            'supplier_id': endpoint.supplier_id}
+    });
+    res.json(providers)
+})
 
 module.exports = router;
