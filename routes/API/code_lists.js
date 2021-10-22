@@ -46,6 +46,58 @@ const tiposFalta = [
     {
         "clave": "AC",
         "valor": "ACTO DE CORRUPCIÓN"
+    },
+    {
+        "clave": "HSEX",
+        "valor":"COMETER O TOLERAR CONDUCTAS DE HOSTIGAMIENTO SEXUAL",
+    },
+    {
+        "clave": "PEC",
+        "valor":"PECULADO",
+    },
+    {
+        "clave": "DRP",
+        "valor":"DESVÍO DE RECURSOS PÚBLICOS",
+    },
+    {
+        "clave": "UII",
+        "valor":"UTILIZACIÓN INDEBIDA DE INFORMACIÓN",
+    },
+    {
+        "clave": "AFN",
+        "valor":"ABUSO DE FUNCIONES",
+    },
+    {
+        "clave": "ABCI",
+        "valor":"ACTUACIÓN BAJO CONFLICTO DE INTERÉS",
+    },
+    {
+        "clave": "CIND",
+        "valor":"CONTRATACIÓN INDEBIDA",
+    },
+    {
+        "clave": "EOCI",
+        "valor":"ENRIQUECIMIENTO OCULTO U OCULTAMIENTO DE CONFLICTO DE INTERÉS",
+    },
+    {
+        "clave": "TINF",
+        "valor":"TRÁFICO DE INFLUENCIAS",
+    },
+    {
+        "clave": "ENCB",
+        "valor":"ENCUBRIMIENTO",
+    },
+    {
+        "clave": "DSCT",
+        "valor":"DESACATO",
+    },
+    {
+        "clave": "OJUST",
+        "valor":"OBSTRUCCIÓN DE LA JUSTICIA",
+    },
+    {
+        "clave": "OTRO",
+        "valor":"OTRO",
     }
 ];
 
