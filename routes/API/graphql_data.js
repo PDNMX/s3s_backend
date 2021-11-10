@@ -1,10 +1,12 @@
 import ApolloClient, {InMemoryCache} from "apollo-boost";
 import {gql} from "apollo-boost";
 import 'cross-fetch/polyfill';
+const GQL_REQUEST_TIMEOUT = parseInt(process.env.GQL_REQUEST_TIMEOUT || 30000, 10);
 
 const fetchEntities = endpoint => {
     const client = new ApolloClient({
         uri: endpoint.url,
+        timeout: GQL_REQUEST_TIMEOUT,
         cache: new InMemoryCache({
             addTypename: false
         }),
