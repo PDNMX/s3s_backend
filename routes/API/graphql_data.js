@@ -1,62 +1,51 @@
-import ApolloClient, {InMemoryCache} from "apollo-boost";
-import {gql} from "apollo-boost";
-import 'cross-fetch/polyfill';
+const axios = require('axios');
 const GQL_REQUEST_TIMEOUT = parseInt(process.env.GQL_REQUEST_TIMEOUT || 30000, 10);
 
 const fetchEntities = endpoint => {
-    const client = new ApolloClient({
-        uri: endpoint.url,
-        timeout: GQL_REQUEST_TIMEOUT,
-        cache: new InMemoryCache({
-            addTypename: false
-        }),
-        headers: {
-            authorization: endpoint.token
-        }
-    });
-
-    return new Promise((resolve, reject) => {
-        client.query({
-            query: gql`
-                query busca{
+    const query = `query busca{
                     results_dependencias (ordenCampo:nombre, ordenSentido:desc){
                         nombre
                     }
-                }
-            `,
-            fetchPolicy: 'no-cache',
-        }).then(data => {
-            try {
+                }`;
+
+    const opts = {
+        url: endpoint.url,
+        method: "POST",
+        timeout: GQL_REQUEST_TIMEOUT,
+        headers: {
+            authorization: endpoint.token
+        },
+        data: JSON.stringify({
+            query: query,
+            variables: {},
+        })
+    };
+
+
+    return new Promise((resolve, reject) => {
+        try {
+            return axios(opts).then(response => {
+                let {data} = response;
                 const entities = data.data.results_dependencias.map(e => {
                     e.supplier_id = endpoint.supplier_id;
                     return e;
                 });
                 resolve(entities);
-            } catch (e) {
-                console.log("Error:", e);
-                resolve([]);
-            }
-        }).catch(error =>{
-            console.log("Error",error)
-            resolve([])
-        })
-    });
-};
-
-const fetchData = (endpoint, options) => {
-    const {pageSize, page, query,sort} = options;
-
-    const client = new ApolloClient({
-        uri: endpoint.url,
-        cache: new InMemoryCache({
-            addTypename: false
-        }),
-        headers: {
-            authorization: endpoint.token
+            }).catch(e => {
+                console.error(e);
+                resolve([])
+            })
+        } catch (e) {
+            console.log("Error:", e);
+            resolve([]);
         }
     });
 
-    let gql_query = gql`
+};
+
+const fetchData = (endpoint, options) => {
+    const {pageSize, page, query, sort} = options;
+    let gql_query = `
         query busca($filtros : FiltrosInput, $limit : Int, $offset : Int, $ordenCampo: ORDEN_CAMPO, $ordenSentido: ORDEN_SENTIDO){
             results(filtros : $filtros, limit : $limit, offset : $offset, ordenCampo: $ordenCampo, ordenSentido: $ordenSentido){
                 nombres
@@ -110,45 +99,61 @@ const fetchData = (endpoint, options) => {
         delete (query.tipoSancion)
     }
 
+
     let variables = {
         "limit": pageSize,
         "offset": pageSize * (page - 1),
         "filtros": query
     };
 
-    if(sort){
+    if (sort) {
         let campo = Object.keys(sort)[0];
         let sentido = Object.values(sort)[0];
 
-        if(campo === 'nombres' || campo === 'primerApellido'){
-            variables.campoOrden = (campo === "primerApellido") ? "primer_apellido": campo
+        if (campo === 'nombres' || campo === 'primerApellido') {
+            variables.campoOrden = (campo === "primerApellido") ? "primer_apellido" : campo
             variables.ordenSentido = sentido
         }
     }
-
-    return new Promise((resolve, reject) => {
-        client.query({
+    const opts = {
+        url: endpoint.url,
+        method: 'POST',
+        timeout: GQL_REQUEST_TIMEOUT,
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            authorization: endpoint.token
+        },
+        data: JSON.stringify({
             query: gql_query,
             variables: variables,
-            fetchPolicy: 'no-cache'
-        }).then(result => {
-            let {data} = result;
-            data.supplier_name = endpoint.supplier_name;
-            data.supplier_id = endpoint.supplier_id;
-            data.levels = endpoint.levels;
-            data.endpoint_type = endpoint.type;
-            data.pagination = {
-                pageSize:pageSize,
-                page:page,
-                totalRows: parseInt(data.total)
-            };
-            resolve(data);
-        }).catch(error => {
-            console.log("Error: ", error);
-            reject(error)
         })
-    });
+    };
 
+    return new Promise((resolve, reject) => {
+        return axios(opts).then(response => {
+            const {data} = response;
+            try {
+                data.supplier_name = endpoint.supplier_name;
+                data.supplier_id = endpoint.supplier_id;
+                data.levels = endpoint.levels;
+                data.endpoint_type = endpoint.type;
+                data.pagination = {
+                    pageSize: pageSize,
+                    page: page,
+                    totalRows: parseInt(data.total)
+                };
+                resolve(data);
+            } catch (e) {
+                console.log("Error: ", e);
+                reject(e)
+            }
+
+        }).catch(e => {
+            console.log("Error: ", e);
+            reject(e)
+        });
+    })
 
 };
 
