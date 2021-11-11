@@ -124,7 +124,6 @@ const fetchData = (endpoint, options) => {
             variables: variables,
         })
     };
-
     return new Promise((resolve, reject) => {
         return axios(opts).then(response => {
             const {data} = {};
