@@ -56,7 +56,8 @@ const getToken = endpoint => {
         url: endpoint.token_url,
         method: 'POST',
         headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Authorization': "Basic " + Buffer.from(`${endpoint.client_id}:${endpoint.client_secret}`).toString('base64')
         },
         data: qs.stringify({
             grant_type: 'password',
