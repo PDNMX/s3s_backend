@@ -5,7 +5,7 @@ const rest = data => {
     data.results.forEach(d => {
         d.fechaCaptura = d.fechaCaptura.substring(0,10);
         d.expediente = d.expediente ? d.expediente : leyenda;
-        d.servidorPublicoSancionado.segundoApellido = d.servidorPublicoSancionado.segundoApellido ? d.servidorPublicoSancionado.segundoApellido : '';
+        d.servidorPublicoSancionado.segundoApellido = d.servidorPublicoSancionado?.segundoApellido ? d.servidorPublicoSancionado.segundoApellido : '';
         d.autoridadSancionadora = d.autoridadSancionadora ? d.autoridadSancionadora : leyenda;
         d.tipoFalta ={
             clave: d.tipoFalta.clave,
@@ -17,10 +17,10 @@ const rest = data => {
         });
 
         d.multa= {
-            monto: (d.multa && d.multa.monto) ? d.multa.monto : leyenda,
+            monto: (d.multa && Object.keys(d.multa).includes("monto")) ? d.multa.monto : leyenda,
             moneda:  {
-                clave: (d.multa && d.multa.moneda && d.multa.moneda.clave) ? d.multa.moneda.clave : '',
-                valor: (d.multa && d.multa.moneda && d.multa.moneda.valor) ? d.multa.moneda.valor : ''
+                clave: d?.multa?.moneda?.clave || '', // (d.multa && d.multa.moneda && d.multa.moneda.clave) ? d.multa.moneda.clave : '',
+                valor: d?.multa?.moneda?.valor || '' //(d.multa && d.multa.moneda && d.multa.moneda.valor) ? d.multa.moneda.valor : ''
             }
         };
         d.inhabilitacion = {
@@ -29,7 +29,7 @@ const rest = data => {
             fechaFinal: d.inhabilitacion && d.inhabilitacion.fechaFinal ? d.inhabilitacion.fechaFinal : '-',
         }
         d.resolucion= {
-            fechaResolucion: d. resolucion && d.resolucion.fecha_notificacion ? d.resolucion.fecha_notificacion : leyenda
+            fechaResolucion: d. resolucion && d.resolucion.fechaResolucion ? d.resolucion.fechaResolucion : leyenda
         } ;
         d.observaciones = d.observaciones
     });
