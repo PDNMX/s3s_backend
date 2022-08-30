@@ -7,9 +7,14 @@ const rest = data => {
         d.expediente = d.expediente ? d.expediente : leyenda;
         d.servidorPublicoSancionado.segundoApellido = d.servidorPublicoSancionado?.segundoApellido ? d.servidorPublicoSancionado.segundoApellido : '';
         d.autoridadSancionadora = d.autoridadSancionadora ? d.autoridadSancionadora : leyenda;
-        d.tipoFalta ={
+        d.tipoFalta = {
             clave: d.tipoFalta.clave,
-            valor: d.tipoFalta.clave === "OTRO" ? 'OTRO' + (d.tipoFalta.descripcion ? ' ('+d.tipoFalta.descripcion+')' : '') : tiposFalta.find(element => element.clave === d.tipoFalta.clave).valor
+            valor:
+                d.tipoFalta.clave === "OTRO" ?
+                    'OTRO' + (d.tipoFalta.descripcion ? ' ('+d.tipoFalta.descripcion+')' : '')
+                    :
+                    tiposFalta.find(element => element.clave === d.tipoFalta.clave) ?
+                        tiposFalta.find(element => element.clave === d.tipoFalta.clave).valor : d.tipoFalta.valor
         };
         d.tipoSancion = d.tipoSancion.map(element => {
             let temporal = tiposSancion.find(e => e.clave === element.clave);
